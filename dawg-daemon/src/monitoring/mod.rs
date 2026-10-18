@@ -1,7 +1,7 @@
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use sysinfo::{Pid, System, ProcessRefreshKind, ProcessesToUpdate};
+use sysinfo::{Pid, ProcessRefreshKind, ProcessesToUpdate, System};
 use tokio::sync::Mutex;
-use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProcessStats {
@@ -23,14 +23,12 @@ impl Monitor {
     pub async fn get_stats(&self, pid: u32) -> Option<ProcessStats> {
         let mut sys = self.system.lock().await;
 
-        let refresh_kind = ProcessRefreshKind::nothing()
-            .with_cpu()
-            .with_memory();
+        let refresh_kind = ProcessRefreshKind::nothing().with_cpu().with_memory();
 
         sys.refresh_processes_specifics(
             ProcessesToUpdate::Some(&[Pid::from_u32(pid)]),
             true, // remove dead processes
-            refresh_kind
+            refresh_kind,
         );
 
         if let Some(process) = sys.process(Pid::from_u32(pid)) {
@@ -40,5 +38,11 @@ impl Monitor {
             });
         }
         None
+    }
+}
+
+impl Default for Monitor {
+    fn default() -> Self {
+        Self::new()
     }
 }

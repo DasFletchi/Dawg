@@ -1,10 +1,10 @@
+use crate::server::config::{ServerConfig, ServerStatus};
 use std::process::Stdio;
+use std::sync::Arc;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::process::Command;
-use tokio::sync::mpsc;
-use std::sync::Arc;
 use tokio::sync::Mutex;
-use crate::server::config::{ServerConfig, ServerStatus};
+use tokio::sync::mpsc;
 
 pub struct ServerProcess {
     config: ServerConfig,

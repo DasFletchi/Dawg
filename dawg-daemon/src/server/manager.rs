@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use crate::server::config::ServerConfig;
 use crate::server::process::ServerProcess;
+use std::collections::HashMap;
 
 pub struct ServerManager {
     servers: HashMap<String, ServerProcess>,
@@ -34,5 +34,11 @@ impl ServerManager {
         } else {
             Err("Server not found".into())
         }
+    }
+}
+
+impl Default for ServerManager {
+    fn default() -> Self {
+        Self::new()
     }
 }
