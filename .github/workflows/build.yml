@@ -1,4 +1,5 @@
-name: Build
+
+name: Build & Release
 
 on:
   push:
@@ -9,26 +10,60 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
+    name: Build and test
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Run Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Run tests
+        run: cargo test --workspace
 
       - name: Build workspace
         run: cargo build --workspace --all-targets
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dawg-debug-linux-x86_64
+          path: |
+            target/debug/dawg-daemon
+            target/debug/dawg-ui
+          if-no-files-found: warn
+          retention-days: 14
+
   release:
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    name: Create GitHub Release
+    if: >-
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,32 +71,46 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
       - name: Build release binaries
-        run: cargo build --workspace --release
+        run: cargo build --workspace --bins --release
 
       - name: Package release binaries
-        id: package
         shell: bash
         run: |
           set -euo pipefail
+
           mkdir -p dist/stage
 
-          mapfile -t binaries < <(find target/release -maxdepth 1 -type f -executable)
-          if [ "${#binaries[@]}" -eq 0 ]; then
-            echo "No release binaries found in target/release"
+          found=0
+
+          for binary in target/release/*; do
+            if [[ -f "$binary" && -x "$binary" ]]; then
+              cp "$binary" dist/stage/
+              found=1
+            fi
+          done
+
+          if [[ "$found" -eq 0 ]]; then
+            echo "::error::No release binaries found"
             exit 1
           fi
 
-          for binary in "${binaries[@]}"; do
-            cp "$binary" dist/stage/
-          done
+          archive="dawg-${GITHUB_REF_NAME}-linux-x86_64.tar.gz"
 
-          asset_name="dawg-${GITHUB_REF_NAME}-${RUNNER_OS,,}-${RUNNER_ARCH,,}.tar.gz"
-          tar -czf "dist/${asset_name}" -C dist/stage .
+          tar -czf "dist/${archive}" -C dist/stage .
 
-          echo "asset=dist/${asset_name}" >> "$GITHUB_OUTPUT"
+          (
+            cd dist
+            sha256sum "$archive" > "${archive}.sha256"
+          )
 
-      - name: Upload assets to GitHub Release
+      - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ steps.package.outputs.asset }}
+          generate_release_notes: true
+          files: |
+            dist/*.tar.gz
+            dist/*.sha256
