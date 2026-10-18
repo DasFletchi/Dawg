@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "dawg-daemon",
+    "dawg-ui"
+]
+resolver = "2"
