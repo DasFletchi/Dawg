@@ -1,0 +1,67 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build workspace
+        run: cargo build --workspace --all-targets
+
+  release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build release binaries
+        run: cargo build --workspace --release
+
+      - name: Package release binaries
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/stage
+
+          mapfile -t binaries < <(find target/release -maxdepth 1 -type f -executable)
+          if [ "${#binaries[@]}" -eq 0 ]; then
+            echo "No release binaries found in target/release"
+            exit 1
+          fi
+
+          for binary in "${binaries[@]}"; do
+            cp "$binary" dist/stage/
+          done
+
+          asset_name="dawg-${GITHUB_REF_NAME}-${RUNNER_OS,,}-${RUNNER_ARCH,,}.tar.gz"
+          tar -czf "dist/${asset_name}" -C dist/stage .
+
+          echo "asset=dist/${asset_name}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload assets to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.package.outputs.asset }}
