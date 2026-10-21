@@ -2,7 +2,7 @@
 Name=Dawg
 Comment=Minecraft Server Manager
 Exec=dawg
-Icon=utilities-terminal
+Icon=dawg
 Terminal=false
 Type=Application
-Categories=System;Utility;
+Categories=Utility;System;

@@ -66,14 +66,44 @@ jobs:
       - name: Verify isolated installation and full removal
         run: python3 scripts/test_uninstall.py --real-binary-dir target/debug
 
-      - name: Upload build artifacts
+      - name: Build release binaries and AppImage
+        run: |
+          cargo build --locked --workspace --bins --release
+          strip target/release/dawg-daemon target/release/dawg-ui
+
+          mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/usr/share/applications
+          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+
+          cp target/release/dawg-daemon AppDir/usr/bin/
+          cp target/release/dawg-ui AppDir/usr/bin/
+          ln -s dawg-ui AppDir/usr/bin/dawg
+
+          cp dawg.desktop AppDir/
+          cp dawg.desktop AppDir/usr/share/applications/
+          cp assets/dawg.png AppDir/
+          cp assets/dawg.png AppDir/usr/share/icons/hicolor/256x256/apps/
+          ln -s dawg.png AppDir/.DirIcon
+
+          cat << 'EOF' > AppDir/AppRun
+          #!/bin/sh
+          SELF=$(readlink -f "$0")
+          HERE=${SELF%/*}
+          export PATH="${HERE}/usr/bin:${PATH}"
+          exec "${HERE}/usr/bin/dawg" "$@"
+          EOF
+          chmod +x AppDir/AppRun
+
+          curl -fsSL -o appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool
+          ARCH=x86_64 ./appimagetool --appimage-extract-and-run AppDir Dawg-x86_64.AppImage
+
+      - name: Upload AppImage
         uses: actions/upload-artifact@v4
         with:
-          name: dawg-debug-linux-x86_64
-          path: |
-            target/debug/dawg-daemon
-            target/debug/dawg-ui
-          if-no-files-found: warn
+          name: Dawg-x86_64.AppImage
+          path: Dawg-x86_64.AppImage
+          if-no-files-found: error
           retention-days: 14
 
   release:
