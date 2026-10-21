@@ -28,6 +28,19 @@ jobs:
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Install native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes cmake pkg-config libwayland-dev libxkbcommon-dev
+
+      - name: Install Java for process integration tests
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
 
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
@@ -36,13 +49,22 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Run Clippy
-        run: cargo clippy --workspace --all-targets -- -D warnings
+        run: cargo clippy --locked --workspace --all-targets -- -D warnings
 
       - name: Run tests
-        run: cargo test --workspace
+        run: cargo test --locked --workspace
 
       - name: Build workspace
-        run: cargo build --workspace --all-targets
+        run: cargo build --locked --workspace --all-targets
+
+      - name: Exercise daemon with a real Java process
+        run: python3 scripts/smoke.py
+
+      - name: Exercise authenticated HTTP administration and files
+        run: python3 scripts/web_smoke.py
+
+      - name: Verify isolated installation and full removal
+        run: python3 scripts/test_uninstall.py --real-binary-dir target/debug
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -71,11 +93,16 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Install native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes cmake pkg-config libwayland-dev libxkbcommon-dev
+
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
 
       - name: Build release binaries
-        run: cargo build --workspace --bins --release
+        run: cargo build --locked --workspace --bins --release
 
       - name: Package release binaries
         shell: bash
@@ -97,6 +124,10 @@ jobs:
             echo "::error::No release binaries found"
             exit 1
           fi
+
+          mkdir -p dist/stage/scripts
+          cp scripts/install.py scripts/uninstall.py dist/stage/scripts/
+          cp README.md dist/stage/
 
           archive="dawg-${GITHUB_REF_NAME}-linux-x86_64.tar.gz"
 

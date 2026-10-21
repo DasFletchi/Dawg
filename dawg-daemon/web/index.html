@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Dawg</title>
+  <link rel="stylesheet" href="/assets/app.css">
+  <script type="module" src="/assets/app.js"></script>
+</head>
+<body>
+  <main id="login-panel" class="login-layout" hidden>
+    <form id="login-form" class="login-form">
+      <h1>Dawg</h1>
+      <p class="muted">Sign in to manage your server.</p>
+      <label class="field">Username<input id="login-username" name="username" autocomplete="username" value="admin" required></label>
+      <label class="field">Password<input id="login-password" name="password" type="password" autocomplete="current-password" required></label>
+      <p id="login-error" class="notice error" role="alert" hidden></p>
+      <button class="primary" id="login-submit" type="submit">Sign in</button>
+      <p class="muted small">Use the administrator password configured on this Dawg host.</p>
+    </form>
+  </main>
+
+  <div id="app-shell" class="app-shell" hidden>
+    <aside id="sidebar" class="sidebar" aria-label="Server navigation">
+      <div class="brand-row"><a class="brand" href="#" id="brand-home">Dawg</a><button id="close-sidebar" class="quiet mobile-only" type="button">Close</button></div>
+      <button id="all-servers" class="nav-item" type="button">All servers</button>
+      <div class="sidebar-label">Servers</div>
+      <nav id="server-list" class="server-list" aria-label="Your servers"></nav>
+      <div class="sidebar-bottom"><button id="logout" class="quiet" type="button">Sign out</button></div>
+    </aside>
+    <button id="sidebar-shade" class="sidebar-shade" type="button" aria-label="Close server navigation" hidden></button>
+
+    <main class="main-pane" id="main-pane">
+      <div class="mobile-toolbar mobile-only"><button id="open-sidebar" type="button" aria-controls="sidebar" aria-expanded="false">Servers</button><span>Dawg</span></div>
+      <div id="connection-error" class="connection-error" role="alert" hidden><div><strong>Cannot reach the server manager</strong><p id="connection-detail"></p></div><button id="reconnect" type="button">Reconnect</button></div>
+      <div id="notification" class="notice" role="status" aria-live="polite" hidden><span id="notification-text"></span><button class="quiet" id="dismiss-notification" type="button">Dismiss</button></div>
+
+      <section id="overview-panel" class="page-panel" hidden>
+        <div class="page-heading"><h1>Servers</h1><button id="new-server" class="primary" type="button">New server</button></div>
+        <div id="overview-empty" class="empty" hidden><h2>No servers yet</h2><p class="muted">Create a Fabric, Paper, Vanilla or Forge server, or upload an existing server JAR.</p><button id="first-server" class="primary" type="button">New server</button></div>
+        <div id="server-table-wrap" class="table-wrap"><table class="server-table"><thead><tr><th>Name</th><th>Software</th><th>Join address</th><th>Status</th><th>Memory</th></tr></thead><tbody id="server-table"></tbody></table></div>
+      </section>
+
+      <section id="create-panel" class="page-panel" hidden>
+        <form id="create-form" class="settings-form">
+          <h1>New server</h1>
+          <label class="field">Server name<input name="name" maxlength="64" required placeholder="Server name" autocomplete="off"></label>
+          <div class="form-row"><label class="field">Software<select name="kind"><option selected>Fabric</option><option>Paper</option><option>Vanilla</option><option>Forge</option></select></label><label class="field">Version channel<select name="channel"><option value="Release">Releases</option><option value="Snapshot">Snapshots</option><option value="All">All versions</option></select></label></div>
+          <label class="field">Minecraft version<select name="version" required><option value="">Loading official versions…</option></select></label>
+          <label id="manual-version-field" class="field" hidden>Version identifier<input name="manual_version" pattern="[A-Za-z0-9._+-]+" autocomplete="off" placeholder="Version supported by your JAR"></label>
+          <div class="catalog-status"><p id="version-status" class="muted small" aria-live="polite"></p><button id="reload-versions" class="quiet" type="button" hidden>Retry version list</button></div>
+          <h2>Runtime</h2>
+          <div class="form-row"><label class="field">Memory (MiB)<input name="memory" type="number" min="512" max="131072" step="1" value="2048" required></label><label class="field">Port<input name="port" type="number" min="1024" max="65535" step="1" value="25565" required></label></div>
+          <label class="field">Java runtime<input name="java" value="auto" required autocomplete="off"></label>
+          <p class="muted small">Use auto for Dawg to download and select a compatible runtime, or enter a Java executable on this host. Minecraft 1.20.5–1.21.x needs Java 21; 26.1 and newer need Java 25.</p>
+          <label class="field">Existing server JAR (optional)<input name="jar" type="file" accept=".jar,application/java-archive"></label>
+          <p id="jar-help" class="muted small">Choose a JAR from this computer, or leave empty and install official server software after creating.</p>
+          <label class="check-field"><input name="eula" type="checkbox" required><span>I accept the <a href="https://www.minecraft.net/eula" target="_blank" rel="noopener noreferrer">Minecraft EULA</a></span></label>
+          <p id="create-validation" class="muted" aria-live="polite"></p>
+          <div class="form-actions"><button id="create-submit" class="primary" type="submit">Create server</button><button id="cancel-create" type="button">Cancel</button></div>
+        </form>
+      </section>
+
+      <section id="server-workspace" class="server-workspace" hidden>
+        <header class="server-header">
+          <div class="server-title"><div class="title-line"><h1 id="server-name"></h1><span id="server-status" class="server-status"></span></div><div class="server-subline"><span id="server-software"></span><span id="join-address" class="join-address"></span><button id="copy-address" class="quiet" type="button" hidden>Copy address</button></div></div>
+          <div id="lifecycle-actions" class="lifecycle-actions"></div>
+        </header>
+        <dl class="resource-line"><div><dt>CPU</dt><dd id="cpu-value">—</dd></div><div><dt>Memory</dt><dd id="memory-value">—</dd></div><div><dt>Uptime</dt><dd id="uptime-value">—</dd></div></dl>
+        <nav id="workspace-tabs" class="workspace-tabs" aria-label="Server workspace"><button type="button" data-tab="console" class="tab active" aria-current="page">Console</button><button type="button" data-tab="files" class="tab">Files</button><button type="button" data-tab="settings" class="tab">Settings</button><button type="button" data-tab="properties" class="tab">Properties</button><button type="button" data-tab="network" class="tab">Network</button></nav>
+        <p id="server-last-error" class="notice error" role="alert" hidden></p>
+
+        <section id="console-panel" class="workspace-panel console-panel">
+          <div class="console-toolbar"><span class="muted small">Times in UTC</span><label class="check-field"><input id="follow-output" type="checkbox" checked>Follow output</label></div>
+          <div id="console-output" class="console-output" role="log" aria-label="Server console" tabindex="0"><p class="console-empty muted">Start the server to see its output here.</p></div>
+          <form id="command-form" class="command-form"><input id="console-command" class="mono" aria-label="Server command" autocomplete="off" spellcheck="false" placeholder="Start the server to send commands" disabled><button id="send-command" type="submit" disabled>Send</button></form>
+        </section>
+
+        <section id="files-panel" class="workspace-panel" hidden></section>
+
+        <section id="settings-panel" class="workspace-panel scroll-panel" hidden>
+          <form id="settings-form" class="settings-form">
+            <p id="settings-readonly" class="muted"></p>
+            <label class="field">Server name<input name="name" maxlength="64" required autocomplete="off"></label>
+            <div class="form-row"><label class="field">Memory (MiB)<input name="memory" type="number" min="512" max="131072" step="1" required></label><label class="field">Port<input name="port" type="number" min="1024" max="65535" step="1" required></label></div>
+            <label class="field">Java runtime<input name="java" required autocomplete="off"></label>
+            <p class="muted small">Use auto to manage Java automatically, or enter an executable on this host.</p>
+            <label class="field">Server directory<input name="directory" class="mono" readonly></label>
+            <div class="form-actions"><button id="save-settings" class="primary" type="submit">Save settings</button><span id="settings-dirty" class="muted small" hidden>Unsaved changes</span></div>
+          </form>
+          <section class="settings-section"><h2>Backup</h2><p class="muted">Create a compressed archive while the server is stopped.</p><button id="backup-server" type="button">Create backup</button></section>
+          <section class="settings-section"><h2>Server software</h2><p class="muted">Reinstall replaces server.jar. Back up first; world files and settings stay in place.</p><button id="reinstall-server" type="button">Reinstall software</button></section>
+          <section class="settings-section"><h2>Remove server</h2><p class="muted">Remove the registration from Dawg. Server files and backups stay on disk.</p><button id="remove-server" class="danger" type="button">Remove server</button></section>
+        </section>
+
+        <section id="properties-panel" class="workspace-panel properties-panel" hidden>
+          <div class="toolbar"><h2>server.properties</h2><span id="properties-dirty" class="muted small" hidden>Unsaved changes</span><div class="toolbar-spacer"></div><button id="reload-properties" type="button">Reload</button><button id="save-properties" class="primary" type="button" disabled>Save</button></div>
+          <p id="properties-help" class="muted small">Changes take effect the next time the server starts.</p>
+          <textarea id="properties-editor" class="mono" aria-label="server.properties" spellcheck="false" readonly placeholder="Loading server.properties…"></textarea>
+        </section>
+
+        <section id="network-panel" class="workspace-panel scroll-panel" hidden>
+          <form id="network-form" class="settings-form">
+            <h2>Public access</h2>
+            <p id="network-readonly" class="muted"></p>
+            <label class="field">Connection method<select name="mode"><option value="manual">Direct connection / manual router setup</option><option value="upnp">Automatic router port forwarding (UPnP)</option><option value="tunnel">Free fixed join address (Playit)</option></select></label>
+            <p id="network-mode-help" class="muted small"></p>
+            <label class="field">Public hostname or fixed IP (optional)<input name="host" autocomplete="off" placeholder="play.example.net"></label>
+            <label class="field">Public port (optional)<input name="external_port" type="number" min="1" max="65535" step="1" placeholder="Use the server port"></label>
+            <div class="form-actions"><button id="save-network" class="primary" type="submit">Save network settings</button><span id="network-dirty" class="muted small" hidden>Unsaved changes</span></div>
+          </form>
+          <section class="settings-section network-status"><h2>Connection details</h2><dl><div><dt>Join address</dt><dd id="network-join">Not configured</dd></div><div><dt>LAN address</dt><dd id="network-lan">Not detected</dd></div><div><dt>Router / public IP</dt><dd id="network-external">Not detected</dd></div><div><dt>Forwarding</dt><dd id="network-forwarding">Disabled</dd></div></dl><p id="network-detail" class="muted"></p><a id="network-setup" class="button primary" href="#" target="_blank" rel="noopener noreferrer" hidden>Link free join address</a></section>
+        </section>
+      </section>
+    </main>
+  </div>
+  <noscript><p class="noscript">Dawg requires JavaScript for live server management.</p></noscript>
+</body>
+</html>

@@ -1,60 +1,30 @@
-use serde::{Deserialize, Serialize};
+pub use dawg_core::{ServerConfig, ServerKind, ServerStatus};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub enum ServerStatus {
-    Stopped,
-    Starting,
-    Running,
-    Stopping,
-    Crashed,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum ServerType {
-    Fabric,
-    Vanilla,
-    Paper,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ServerConfig {
-    pub id: String,
-    pub name: String,
-    pub path: String,
-    pub server_type: ServerType,
-    pub minecraft_version: String,
-    pub loader_version: Option<String>,
-    pub ram_mb: u32,
-    pub java_path: String,
-}
-
-impl Default for ServerConfig {
-    fn default() -> Self {
-        Self {
-            id: uuid::Uuid::new_v4().to_string(),
-            name: "New Server".to_string(),
-            path: "".to_string(),
-            server_type: ServerType::Fabric,
-            minecraft_version: "1.20.4".to_string(),
-            loader_version: None,
-            ram_mb: 4096,
-            java_path: "java".to_string(),
-        }
+pub fn validate(config: &ServerConfig) -> Result<(), String> {
+    if config.name.trim().is_empty()
+        || config.name.chars().count() > 80
+        || config.name.chars().any(char::is_control)
+    {
+        return Err("Server name must contain 1–80 printable characters.".into());
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_server_config_default() {
-        let config = ServerConfig::default();
-        assert_eq!(config.name, "New Server");
-        assert_eq!(config.ram_mb, 4096);
-        assert_eq!(config.java_path, "java");
-        assert_eq!(config.minecraft_version, "1.20.4");
-        // default to fabric
-        assert!(matches!(config.server_type, ServerType::Fabric));
+    if config.memory_mb < 512 || config.memory_mb > 262144 {
+        return Err("Memory must be between 512 and 262144 MB.".into());
     }
+    if config.port < 1024 {
+        return Err("Use a server port between 1024 and 65535.".into());
+    }
+    if config.minecraft_version.is_empty()
+        || config.minecraft_version.len() > 64
+        || !config
+            .minecraft_version
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || b".-_".contains(&b))
+    {
+        return Err("Enter a Minecraft version such as 1.21.11.".into());
+    }
+    if config.java_path.trim().is_empty() || config.java_path.contains(['\0', '\n', '\r']) {
+        return Err("Enter a Java executable, without command-line arguments.".into());
+    }
+    config.network.validate()?;
+    Ok(())
 }

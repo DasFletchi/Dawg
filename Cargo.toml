@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "dawg-core",
     "dawg-daemon",
     "dawg-ui"
 ]
