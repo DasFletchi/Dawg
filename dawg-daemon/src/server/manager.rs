@@ -687,9 +687,8 @@ fn normalize_properties(content: &str, port: u16) -> String {
     let lines: Vec<_> = content
         .lines()
         .filter(|line| {
-            !line
-                .split_once('=')
-                .is_some_and(|(name, _)| name.trim() == "server-port")
+            line.split_once('=')
+                .is_none_or(|(name, _)| name.trim() != "server-port")
                 && *line != "# Dawg manages this port; change it in Settings."
         })
         .collect();
