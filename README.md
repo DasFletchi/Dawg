@@ -1,5 +1,7 @@
 # Dawg
 
+![Dawg Console & Management](assets/screenshot.png)
+
 A Minecraft server manager for Linux home PCs and VPS hosts. A native Iced desktop and an authenticated web interface use the same Rust daemon, which owns the real server processes. Closing the desktop window leaves your servers running; stopping the daemon shuts them down gracefully.
 
 The daemon serves browser administration on 127.0.0.1:8080 by default. Game servers run on your machine. Public join addresses and browser administration have separate settings.
