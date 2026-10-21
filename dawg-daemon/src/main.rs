@@ -102,7 +102,8 @@ async fn run() -> Result<(), String> {
             network_manager.refresh_network().await;
         }
     });
-    let mut web_error = None;
+    let mut shutdown_error = None;
+    let mut web_finished = false;
     let mut sigterm = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
         .map_err(|e| e.to_string())?;
     loop {
@@ -110,11 +111,18 @@ async fn run() -> Result<(), String> {
             _ = tokio::signal::ctrl_c() => break,
             _ = sigterm.recv() => break,
             result = &mut web_task => {
-                web_error = Some(match result { Ok(Err(error)) => error, Ok(Ok(())) => "Web listener stopped unexpectedly".into(), Err(error) => error.to_string() });
+                web_finished = true;
+                shutdown_error = Some(match result { Ok(Err(error)) => error, Ok(Ok(())) => "Web listener stopped unexpectedly".into(), Err(error) => error.to_string() });
                 break;
             }
             accepted = listener.accept() => {
-                let (stream, _) = accepted.map_err(|e| e.to_string())?;
+                let (stream, _) = match accepted {
+                    Ok(connection) => connection,
+                    Err(error) => {
+                        shutdown_error = Some(format!("IPC listener failed: {error}"));
+                        break;
+                    }
+                };
                 let manager = manager.clone();
                 tokio::spawn(async move { if let Err(error) = handle_client(stream, manager).await { eprintln!("IPC connection: {error}"); } });
             }
@@ -126,14 +134,14 @@ async fn run() -> Result<(), String> {
     monitor.abort();
     let _ = monitor.await;
     manager.shutdown().await;
-    if web_error.is_none() {
+    if !web_finished {
         let _ = tokio::time::timeout(std::time::Duration::from_secs(5), web_task).await;
     }
     remove_socket(&socket);
     drop(lock);
     drop(data_lock);
     println!("Dawg daemon stopped.");
-    if let Some(error) = web_error {
+    if let Some(error) = shutdown_error {
         return Err(error);
     }
     Ok(())

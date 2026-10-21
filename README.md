@@ -29,7 +29,7 @@ cargo build --locked --workspace --all-targets
 
 With a registered server, the desktop opens its console directly. Console, Settings, Properties and Network share a compact server workspace; the list of all servers is secondary navigation. The interface embeds Source Sans 3 so its typography is consistent across Linux installations. Design decisions and the installed design skills are documented in [DESIGN.md](DESIGN.md).
 
-The desktop starts the neighboring `dawg-daemon` binary when needed. To inspect daemon startup failures, run it directly in a terminal:
+The desktop starts the neighboring `dawg-daemon` binary when its socket is absent. An existing but unresponsive socket produces a recovery message instead of launching another daemon. Retry if the daemon is starting; to recover a stale socket or inspect startup failures, run the daemon directly in a terminal:
 
 ```bash
 ./target/debug/dawg-daemon
@@ -104,6 +104,8 @@ python3 scripts/test_uninstall.py
 ```
 
 The smoke suite requires a JDK (`java`, `javac`, and `jar`) and `tar`. It builds a tiny local Java fixture and exercises the real daemon with temporary directories. It tests process control and IPC without downloading Minecraft or accepting its EULA on your behalf. Download provider tests use metadata and checksum fixtures; a live provider check additionally needs network access to Mojang, Paper, or Fabric.
+
+Regression checks for reported startup, IPC, status and shutdown problems are mapped in [docs/issue-verification.md](docs/issue-verification.md).
 
 For headless GUI development, provide Xvfb and a Mesa software Vulkan driver:
 

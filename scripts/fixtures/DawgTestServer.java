@@ -8,6 +8,10 @@ public final class DawgTestServer {
     public static void main(String[] args) throws Exception {
         Files.createDirectories(Path.of("world"));
         Files.writeString(Path.of("world", "level.dat"), "Dawg integration fixture\n");
+        if (Files.exists(Path.of("startup-delay-ms"))) {
+            System.out.println("Fixture startup paused");
+            Thread.sleep(Long.parseLong(Files.readString(Path.of("startup-delay-ms")).trim()));
+        }
         System.out.println("Done (0.001s)! For help, type \"help\"");
         System.err.println("Fixture stderr is connected");
         boolean slowStop = false;
@@ -19,6 +23,7 @@ public final class DawgTestServer {
                             Thread.sleep(250);
                         }
                         System.out.println("Stopping server");
+                        Files.writeString(Path.of("world", "clean-shutdown.txt"), "Stopped through console\n");
                         return;
                     }
                     case "crash" -> {

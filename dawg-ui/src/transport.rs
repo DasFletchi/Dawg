@@ -18,13 +18,33 @@ pub async fn request(request: Request) -> Result<Response, String> {
 /// Called at initial startup and explicit reconnect only. Regular requests never
 /// spawn processes, preventing a failing daemon from causing a spawn loop.
 pub async fn connect() -> Result<Response, String> {
-    let path = socket_path();
-    if let Ok(stream) = connect_stream(&path).await {
-        return exchange_with_timeout(stream, Request::Snapshot).await;
+    connect_at(&socket_path(), &daemon_binary()).await
+}
+
+async fn connect_at(path: &Path, binary: &Path) -> Result<Response, String> {
+    let connection_error = match connect_stream(path).await {
+        Ok(stream) => return exchange_with_timeout(stream, Request::Snapshot).await,
+        Err(error) => error,
+    };
+    // An existing socket may belong to a daemon that is still starting or
+    // temporarily unavailable. Only absence authorizes automatic startup.
+    // symlink_metadata also preserves dangling links and non-socket files.
+    match tokio::fs::symlink_metadata(path).await {
+        Ok(_) => {
+            return Err(format!(
+                "{connection_error}. The existing socket was left untouched. Retry, or restart dawg-daemon manually to recover a stale socket."
+            ));
+        }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => {
+            return Err(format!(
+                "Cannot inspect the daemon socket at {}: {error}. No daemon was started.",
+                path.display()
+            ));
+        }
     }
 
-    let binary = daemon_binary();
-    let mut child = tokio::process::Command::new(&binary)
+    let mut child = tokio::process::Command::new(binary)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::null())
@@ -42,7 +62,7 @@ pub async fn connect() -> Result<Response, String> {
 
     for _ in 0..30 {
         tokio::time::sleep(Duration::from_millis(100)).await;
-        if let Ok(stream) = connect_stream(&path).await {
+        if let Ok(stream) = connect_stream(path).await {
             return exchange_with_timeout(stream, Request::Snapshot).await;
         }
     }
@@ -122,6 +142,7 @@ async fn exchange(mut stream: UnixStream, request: Request) -> Result<Response, 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::os::unix::fs::PermissionsExt;
     use std::sync::atomic::{AtomicU64, Ordering};
     use tokio::net::UnixListener;
 
@@ -133,6 +154,124 @@ mod tests {
             std::process::id(),
             NEXT_ID.fetch_add(1, Ordering::Relaxed)
         ))
+    }
+
+    struct StartupFixture {
+        directory: PathBuf,
+        socket: PathBuf,
+        binary: PathBuf,
+        marker: PathBuf,
+    }
+
+    impl StartupFixture {
+        fn new() -> Self {
+            let directory = fixture_path().with_extension("startup");
+            std::fs::create_dir(&directory).expect("create startup fixture");
+            let binary = directory.join("daemon");
+            // The script can record an unexpected launch without managing any
+            // real installation or depending on a Java runtime.
+            std::fs::write(
+                &binary,
+                "#!/bin/sh\nprintf 'started\\n' >> \"$0.started\"\n",
+            )
+            .expect("write launch fixture");
+            std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o700))
+                .expect("make launch fixture executable");
+            Self {
+                socket: directory.join("daemon.sock"),
+                marker: directory.join("daemon.started"),
+                directory,
+                binary,
+            }
+        }
+    }
+
+    impl Drop for StartupFixture {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.directory);
+        }
+    }
+
+    #[tokio::test]
+    async fn stale_socket_does_not_spawn_a_daemon_or_replace_the_socket() {
+        let fixture = StartupFixture::new();
+        let listener = UnixListener::bind(&fixture.socket).expect("bind stale socket");
+        drop(listener);
+        let error = connect_at(&fixture.socket, &fixture.binary)
+            .await
+            .expect_err("stale sockets require explicit recovery");
+        assert!(error.contains("existing socket was left untouched"));
+        assert!(fixture.socket.exists());
+        assert!(!fixture.marker.exists(), "a second daemon was launched");
+    }
+
+    #[tokio::test]
+    async fn non_socket_path_is_preserved_without_spawning() {
+        let fixture = StartupFixture::new();
+        std::fs::write(&fixture.socket, b"user file").expect("write non-socket fixture");
+        connect_at(&fixture.socket, &fixture.binary)
+            .await
+            .expect_err("non-socket files cannot authorize startup");
+        assert_eq!(std::fs::read(&fixture.socket).unwrap(), b"user file");
+        assert!(
+            !fixture.marker.exists(),
+            "a daemon was launched over a file"
+        );
+    }
+
+    #[tokio::test]
+    async fn dangling_socket_symlink_does_not_authorize_startup() {
+        let fixture = StartupFixture::new();
+        std::os::unix::fs::symlink(fixture.directory.join("missing"), &fixture.socket)
+            .expect("create dangling socket link");
+        connect_at(&fixture.socket, &fixture.binary)
+            .await
+            .expect_err("a dangling link is still an existing path");
+        assert!(fixture.socket.is_symlink());
+        assert!(
+            !fixture.marker.exists(),
+            "a daemon was launched over a symlink"
+        );
+    }
+
+    #[tokio::test]
+    async fn live_socket_reuses_the_existing_daemon() {
+        let fixture = StartupFixture::new();
+        let listener = UnixListener::bind(&fixture.socket).expect("bind live fixture");
+        let server = tokio::spawn(serve_frame(listener, b"\"Ok\"\n".to_vec()));
+        assert!(matches!(
+            connect_at(&fixture.socket, &fixture.binary).await.unwrap(),
+            Response::Ok
+        ));
+        server.await.expect("existing daemon answered");
+        assert!(!fixture.marker.exists(), "an extra daemon was launched");
+    }
+
+    #[tokio::test]
+    async fn missing_socket_starts_one_daemon_and_waits_for_its_response() {
+        let fixture = StartupFixture::new();
+        let socket = fixture.socket.clone();
+        let marker = fixture.marker.clone();
+        let server = tokio::spawn(async move {
+            tokio::time::timeout(Duration::from_secs(3), async {
+                while !marker.exists() {
+                    tokio::time::sleep(Duration::from_millis(10)).await;
+                }
+            })
+            .await
+            .expect("automatic startup ran the daemon");
+            let listener = UnixListener::bind(&socket).expect("bind newly started fixture");
+            serve_frame(listener, b"\"Ok\"\n".to_vec()).await;
+        });
+        assert!(matches!(
+            connect_at(&fixture.socket, &fixture.binary).await.unwrap(),
+            Response::Ok
+        ));
+        server.await.expect("new daemon answered");
+        assert_eq!(
+            std::fs::read_to_string(&fixture.marker).unwrap(),
+            "started\n"
+        );
     }
 
     async fn serve_frame(listener: UnixListener, bytes: Vec<u8>) {

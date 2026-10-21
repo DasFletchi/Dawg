@@ -187,12 +187,15 @@ class Smoke:
         require(snapshot["host"]["memory_total_bytes"] > 0, "host metrics are missing")
         self.check("empty persisted dashboard and real host metrics")
 
+        socket_identity = (self.socket_path.stat().st_dev, self.socket_path.stat().st_ino)
         duplicate = subprocess.run([str(self.daemon)], env=self.env, capture_output=True, text=True, timeout=5)
         require(duplicate.returncode != 0, "a second daemon claimed the same socket")
         other_socket = dict(self.env, DAWG_SOCKET=str(self.root / "other.sock"))
         duplicate_data = subprocess.run([str(self.daemon)], env=other_socket, capture_output=True, text=True, timeout=5)
         require(duplicate_data.returncode != 0, "two daemons claimed one data directory through different sockets")
         require(self.snapshot()["servers"] == [], "a second daemon disrupted the first")
+        require((self.socket_path.stat().st_dev, self.socket_path.stat().st_ino) == socket_identity,
+                "a second daemon replaced the first daemon's socket")
         require(stat.S_IMODE(self.socket_path.stat().st_mode) == 0o600, "IPC socket is not private to its user")
         self.check("duplicate-daemon protection and private IPC socket permissions")
 
@@ -264,6 +267,14 @@ class Smoke:
         self.success({"StartServer": identifier})
         running = self.wait_for(identifier, lambda item: item["status"] == "Running", "real Java process readiness")
         require(isinstance(running["pid"], int), "running Java process has no PID")
+        other = self.success({"CreateServer": dict(create, name="Offline status fixture", port=25593)}, ("Server",))["Server"]
+        listed = {server["config"]["id"]: server for server in self.snapshot()["servers"]}
+        require(set(listed) == {identifier, other["config"]["id"]}, "snapshot did not list the actual registrations")
+        require(listed[identifier]["status"] == "Running" and listed[other["config"]["id"]]["status"] == "Stopped",
+                "per-server status was hardcoded or looked up using the wrong ID")
+        require(listed[other["config"]["id"]]["pid"] is None, "stopped server fabricated a process")
+        self.error({"Logs": {"id": "missing-server", "after": 0}})
+        self.success({"RemoveServer": other["config"]["id"]}, ("Removed",))
         self.wait_for_log(identifier, "Fixture stderr is connected")
         self.success({"SendCommand": {"id": identifier, "command": "status"}})
         entries = self.wait_for_log(identifier, "Fixture status: running")
@@ -342,15 +353,25 @@ class Smoke:
         second_id = second["config"]["id"]
         self.success({"StartServer": second_id})
         active = self.wait_for(second_id, lambda item: item["status"] == "Running", "process before daemon shutdown")
+        starting = self.success({"CreateServer": dict(create, name="Starting shutdown fixture", port=25593)}, ("Server",))["Server"]
+        starting_id = starting["config"]["id"]
+        Path(starting["config"]["directory"], "startup-delay-ms").write_text("5000\n")
+        self.success({"StartServer": starting_id})
+        self.wait_for_log(starting_id, "Fixture startup paused")
+        preparing = self.server(starting_id)
+        require(preparing["status"] == "Starting", "fixture did not remain in Starting for the shutdown regression")
         self.stop_daemon()
         require(not self.socket_path.exists(), "socket survived final daemon shutdown")
-        try:
-            os.kill(active["pid"], 0)
-        except ProcessLookupError:
-            pass
-        else:
-            raise AssertionError("daemon shutdown orphaned the managed Java process")
-        self.check("daemon shutdown terminates its managed Java process")
+        for process in (active, preparing):
+            try:
+                os.kill(process["pid"], 0)
+            except ProcessLookupError:
+                pass
+            else:
+                raise AssertionError("daemon shutdown orphaned a managed Java process")
+            saved = Path(process["config"]["directory"], "world/clean-shutdown.txt")
+            require(saved.read_text() == "Stopped through console\n", "shutdown killed Java without processing stop and flushing world data")
+        self.check("daemon shutdown gracefully stops and reaps both Running and Starting Java processes")
 
         relocated = self.root / "relocated-data"
         self.data_path.rename(relocated)
