@@ -103,12 +103,12 @@ pub fn is_public_ip(ip: IpAddr) -> bool {
                 return public_v4(ip);
             }
             let segments = ip.segments();
-            !ip.is_unspecified()
-                && !ip.is_loopback()
-                && !ip.is_multicast()
-                && segments[0] & 0xfe00 != 0xfc00
-                && segments[0] & 0xffc0 != 0xfe80
-                && !(segments[0] == 0x2001 && segments[1] == 0x0db8)
+            !(ip.is_unspecified()
+                || ip.is_loopback()
+                || ip.is_multicast()
+                || segments[0] & 0xfe00 == 0xfc00
+                || segments[0] & 0xffc0 == 0xfe80
+                || segments[0] == 0x2001 && segments[1] == 0x0db8)
                 && segments[0] & 0xe000 == 0x2000
         }
     }
