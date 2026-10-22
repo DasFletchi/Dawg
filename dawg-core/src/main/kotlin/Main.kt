@@ -5,7 +5,7 @@
 package org.example
 
 fun main(){
-    var hello = "Hi Mom"
+    var hello: String = "Hi Mom"
     var messa1 = "Dawg is so back"
     var messa2 = "67 rizller shall rise again."
     println(hello)
