@@ -1,9 +1,835 @@
 [gd_scene format=3 uid="uid://cmbbas3hgodtc"]
 
-[node name="DawgUI main" type="Control" unique_id=1063390144]
+[node name="DawgUI main" type="Control" unique_id=407262230]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="AppMargin" type="MarginContainer" parent="." unique_id=1339781339]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 10.0
+offset_bottom = 93.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="MainLayout" type="HBoxContainer" parent="AppMargin" unique_id=732819405]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Sidebar" type="VBoxContainer" parent="AppMargin/MainLayout" unique_id=1287411617]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BrandLabel" type="Label" parent="AppMargin/MainLayout/Sidebar" unique_id=257845292]
+layout_mode = 2
+text = "Dawg"
+
+[node name="ServerSelector" type="OptionButton" parent="AppMargin/MainLayout/Sidebar" unique_id=1278298530]
+layout_mode = 2
+selected = 0
+item_count = 1
+popup/item_0/text = "SMP Survival (Fabric 1.20.4)"
+popup/item_0/id = 0
+
+[node name="HSeparator1" type="HSeparator" parent="AppMargin/MainLayout/Sidebar" unique_id=1935270033]
+layout_mode = 2
+
+[node name="NavMenu" type="VBoxContainer" parent="AppMargin/MainLayout/Sidebar" unique_id=796716509]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="NavConsole" type="Button" parent="AppMargin/MainLayout/Sidebar/NavMenu" unique_id=956843662]
+layout_mode = 2
+text = "Console"
+alignment = 0
+
+[node name="NavFiles" type="Button" parent="AppMargin/MainLayout/Sidebar/NavMenu" unique_id=270137432]
+layout_mode = 2
+text = "Files"
+alignment = 0
+
+[node name="NavModBrowser" type="Button" parent="AppMargin/MainLayout/Sidebar/NavMenu" unique_id=894815969]
+layout_mode = 2
+text = "Mod Browser"
+alignment = 0
+
+[node name="NavDatabases" type="Button" parent="AppMargin/MainLayout/Sidebar/NavMenu" unique_id=1785077633]
+layout_mode = 2
+text = "Databases"
+alignment = 0
+
+[node name="NavBackups" type="Button" parent="AppMargin/MainLayout/Sidebar/NavMenu" unique_id=1414442288]
+layout_mode = 2
+text = "Backups"
+alignment = 0
+
+[node name="NavNetwork" type="Button" parent="AppMargin/MainLayout/Sidebar/NavMenu" unique_id=1648001482]
+layout_mode = 2
+text = "Network"
+alignment = 0
+
+[node name="NavStartup" type="Button" parent="AppMargin/MainLayout/Sidebar/NavMenu" unique_id=698931199]
+layout_mode = 2
+text = "Startup"
+alignment = 0
+
+[node name="NavUsers" type="Button" parent="AppMargin/MainLayout/Sidebar/NavMenu" unique_id=859653663]
+layout_mode = 2
+text = "Users"
+alignment = 0
+
+[node name="NavActivity" type="Button" parent="AppMargin/MainLayout/Sidebar/NavMenu" unique_id=101185964]
+layout_mode = 2
+text = "Activity"
+alignment = 0
+
+[node name="NavSettings" type="Button" parent="AppMargin/MainLayout/Sidebar/NavMenu" unique_id=752321065]
+layout_mode = 2
+text = "Settings"
+alignment = 0
+
+[node name="SidebarSpacer" type="Control" parent="AppMargin/MainLayout/Sidebar" unique_id=1885260278]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ContentArea" type="VBoxContainer" parent="AppMargin/MainLayout" unique_id=731439512]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="TopBar" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea" unique_id=1321705102]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TopBarSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/TopBar" unique_id=2058943740]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ServerActions" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/TopBar" unique_id=1217138680]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="StartButton" type="Button" parent="AppMargin/MainLayout/ContentArea/TopBar/ServerActions" unique_id=504165044]
+layout_mode = 2
+text = "Start"
+
+[node name="RestartButton" type="Button" parent="AppMargin/MainLayout/ContentArea/TopBar/ServerActions" unique_id=2012354990]
+layout_mode = 2
+text = "Restart"
+
+[node name="StopButton" type="Button" parent="AppMargin/MainLayout/ContentArea/TopBar/ServerActions" unique_id=332043065]
+layout_mode = 2
+text = "Stop"
+
+[node name="VSeparator1" type="VSeparator" parent="AppMargin/MainLayout/ContentArea/TopBar" unique_id=1265071949]
+layout_mode = 2
+
+[node name="UserProfile" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/TopBar" unique_id=1239422971]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="UserVBox" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/TopBar/UserProfile" unique_id=1997568265]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="UserName" type="Label" parent="AppMargin/MainLayout/ContentArea/TopBar/UserProfile/UserVBox" unique_id=360038354]
+layout_mode = 2
+text = "operator_root"
+
+[node name="UserRole" type="Label" parent="AppMargin/MainLayout/ContentArea/TopBar/UserProfile/UserVBox" unique_id=1862105599]
+layout_mode = 2
+text = "SUPERADMIN"
+
+[node name="UserAvatar" type="Button" parent="AppMargin/MainLayout/ContentArea/TopBar/UserProfile" unique_id=54573170]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "👤"
+
+[node name="ServerAddressBanner" type="PanelContainer" parent="AppMargin/MainLayout/ContentArea" unique_id=1566706040]
+layout_mode = 2
+
+[node name="BannerMargin" type="MarginContainer" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner" unique_id=1356393338]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
+
+[node name="BannerHBox" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin" unique_id=1273163129]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ServerIcon" type="Button" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox" unique_id=443547086]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+text = "🖥"
+
+[node name="AddressInfoVBox" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox" unique_id=914071117]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="AddressLabel" type="Label" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox/AddressInfoVBox" unique_id=1335813787]
+layout_mode = 2
+text = "SERVER ADDRESS (JAVA & BEDROCK)"
+
+[node name="AddressActionRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox/AddressInfoVBox" unique_id=1834246980]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="AddressText" type="Label" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox/AddressInfoVBox/AddressActionRow" unique_id=289594189]
+layout_mode = 2
+text = "smp.dawghost.net:25565"
+
+[node name="CopyButton" type="Button" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox/AddressInfoVBox/AddressActionRow" unique_id=1711660196]
+layout_mode = 2
+text = "Copy"
+
+[node name="UptimeRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox/AddressInfoVBox" unique_id=518512473]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="UptimeTitle" type="Label" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox/AddressInfoVBox/UptimeRow" unique_id=1698827779]
+layout_mode = 2
+text = "UPTIME"
+
+[node name="UptimeValue" type="Label" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox/AddressInfoVBox/UptimeRow" unique_id=1697344313]
+layout_mode = 2
+text = "4d 18h"
+
+[node name="TunnelStatus" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox" unique_id=1125471915]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TunnelDot" type="Label" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox/TunnelStatus" unique_id=930240355]
+layout_mode = 2
+text = "●"
+
+[node name="TunnelText" type="Label" parent="AppMargin/MainLayout/ContentArea/ServerAddressBanner/BannerMargin/BannerHBox/TunnelStatus" unique_id=1814780875]
+layout_mode = 2
+text = "playit.gg tunnel: Frankfurt (fra-02) · Port 19132"
+
+[node name="MetricsGrid" type="GridContainer" parent="AppMargin/MainLayout/ContentArea" unique_id=256610970]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="CpuCard" type="PanelContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid" unique_id=1836170159]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CpuMargin" type="MarginContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard" unique_id=1256781885]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
+
+[node name="CpuVBox" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin" unique_id=1454127876]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="CpuHeaderRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox" unique_id=513155451]
+layout_mode = 2
+
+[node name="CpuTitle" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox/CpuHeaderRow" unique_id=485319748]
+layout_mode = 2
+text = "CPU LOAD"
+
+[node name="CpuHeaderSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox/CpuHeaderRow" unique_id=1386765335]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CpuDedicated" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox/CpuHeaderRow" unique_id=1736392681]
+layout_mode = 2
+text = "4 vCPU Dedicated"
+
+[node name="CpuValueRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox" unique_id=310124914]
+layout_mode = 2
+
+[node name="CpuMetricValue" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox/CpuValueRow" unique_id=98769269]
+layout_mode = 2
+text = "16.4%"
+
+[node name="CpuValueSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox/CpuValueRow" unique_id=662575591]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CpuHealthStatus" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox/CpuValueRow" unique_id=1856336459]
+layout_mode = 2
+text = "Healthy"
+
+[node name="CpuProgressBar" type="ProgressBar" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox" unique_id=1622307016]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+value = 16.4
+show_percentage = false
+
+[node name="CpuFooterRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox" unique_id=2020543130]
+layout_mode = 2
+
+[node name="CpuModel" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox/CpuFooterRow" unique_id=839366346]
+layout_mode = 2
+text = "AMD EPYC 7763"
+
+[node name="CpuFooterSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox/CpuFooterRow" unique_id=1638500138]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CpuPeakValue" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/CpuCard/CpuMargin/CpuVBox/CpuFooterRow" unique_id=155186082]
+layout_mode = 2
+text = "Peak 42.1%"
+
+[node name="MemoryCard" type="PanelContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid" unique_id=2116441059]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MemoryMargin" type="MarginContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard" unique_id=177253173]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
+
+[node name="MemoryVBox" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin" unique_id=356706083]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="MemoryHeaderRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox" unique_id=943524238]
+layout_mode = 2
+
+[node name="MemoryTitle" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox/MemoryHeaderRow" unique_id=636553062]
+layout_mode = 2
+text = "MEMORY"
+
+[node name="MemoryHeaderSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox/MemoryHeaderRow" unique_id=1187430754]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MemoryPercent" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox/MemoryHeaderRow" unique_id=1152124981]
+layout_mode = 2
+text = "60.2%"
+
+[node name="MemoryValueRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox" unique_id=1669010418]
+layout_mode = 2
+
+[node name="MemoryMetricValue" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox/MemoryValueRow" unique_id=101138910]
+layout_mode = 2
+text = "4.82 / 8.0 GB"
+
+[node name="MemoryValueSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox/MemoryValueRow" unique_id=611719681]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MemoryGcStatus" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox/MemoryValueRow" unique_id=116979565]
+layout_mode = 2
+text = "GC Active"
+
+[node name="MemoryProgressBar" type="ProgressBar" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox" unique_id=1825896361]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+value = 60.2
+show_percentage = false
+
+[node name="MemoryFooterRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox" unique_id=283755264]
+layout_mode = 2
+
+[node name="MemoryFree" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox/MemoryFooterRow" unique_id=52739667]
+layout_mode = 2
+text = "3.18 GB Free"
+
+[node name="MemoryFooterSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox/MemoryFooterRow" unique_id=2103674470]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MemoryFlags" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/MemoryCard/MemoryMargin/MemoryVBox/MemoryFooterRow" unique_id=2125021039]
+layout_mode = 2
+text = "Aikar's Flags"
+
+[node name="StorageCard" type="PanelContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid" unique_id=1042482397]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StorageMargin" type="MarginContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard" unique_id=822309866]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
+
+[node name="StorageVBox" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin" unique_id=1571755558]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="StorageHeaderRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox" unique_id=2065319400]
+layout_mode = 2
+
+[node name="StorageTitle" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox/StorageHeaderRow" unique_id=183249985]
+layout_mode = 2
+text = "STORAGE"
+
+[node name="StorageHeaderSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox/StorageHeaderRow" unique_id=2070943751]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StoragePercent" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox/StorageHeaderRow" unique_id=2131947926]
+layout_mode = 2
+text = "16.2%"
+
+[node name="StorageValueRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox" unique_id=469895949]
+layout_mode = 2
+
+[node name="StorageMetricValue" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox/StorageValueRow" unique_id=1006835401]
+layout_mode = 2
+text = "3.24 / 20.0 GB"
+
+[node name="StorageValueSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox/StorageValueRow" unique_id=1825686958]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StorageFree" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox/StorageValueRow" unique_id=869546013]
+layout_mode = 2
+text = "16.76 GB Free"
+
+[node name="StorageProgressBar" type="ProgressBar" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox" unique_id=475683291]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+value = 16.2
+show_percentage = false
+
+[node name="StorageFooterRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox" unique_id=1432871594]
+layout_mode = 2
+
+[node name="StorageRaid" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox/StorageFooterRow" unique_id=767699377]
+layout_mode = 2
+text = "NVMe RAID-1"
+
+[node name="StorageFooterSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox/StorageFooterRow" unique_id=1222655029]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StorageTypes" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/StorageCard/StorageMargin/StorageVBox/StorageFooterRow" unique_id=625016153]
+layout_mode = 2
+text = "Worlds & Plugins"
+
+[node name="NetworkCard" type="PanelContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid" unique_id=2108339686]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NetworkMargin" type="MarginContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard" unique_id=1803559997]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
+
+[node name="NetworkVBox" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin" unique_id=1637158325]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="NetworkHeaderRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin/NetworkVBox" unique_id=410133020]
+layout_mode = 2
+
+[node name="NetworkTitle" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin/NetworkVBox/NetworkHeaderRow" unique_id=2110083563]
+layout_mode = 2
+text = "NETWORK"
+
+[node name="NetworkHeaderSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin/NetworkVBox/NetworkHeaderRow" unique_id=544906118]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NetworkPortSpeed" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin/NetworkVBox/NetworkHeaderRow" unique_id=571880922]
+layout_mode = 2
+text = "1 Gbps Port"
+
+[node name="NetworkValueRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin/NetworkVBox" unique_id=1394940223]
+layout_mode = 2
+
+[node name="NetworkMetricValue" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin/NetworkVBox/NetworkValueRow" unique_id=1915569710]
+layout_mode = 2
+text = "↓ 128 KB/s  ·  ↑ 482 KB/s"
+
+[node name="NetworkProgressBar" type="ProgressBar" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin/NetworkVBox" unique_id=455297010]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+value = 45.0
+show_percentage = false
+
+[node name="NetworkFooterRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin/NetworkVBox" unique_id=426010149]
+layout_mode = 2
+
+[node name="NetworkTotalIn" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin/NetworkVBox/NetworkFooterRow" unique_id=52149379]
+layout_mode = 2
+text = "Total In: 412 MB"
+
+[node name="NetworkFooterSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin/NetworkVBox/NetworkFooterRow" unique_id=359274440]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NetworkTotalOut" type="Label" parent="AppMargin/MainLayout/ContentArea/MetricsGrid/NetworkCard/NetworkMargin/NetworkVBox/NetworkFooterRow" unique_id=1201698779]
+layout_mode = 2
+text = "Total Out: 1.43 GB"
+
+[node name="BottomSection" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea" unique_id=1048962174]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="ConsolePanel" type="PanelContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection" unique_id=1458504550]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.75
+
+[node name="ConsoleMargin" type="MarginContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel" unique_id=301977484]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="ConsoleVBox" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin" unique_id=1826099883]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ConsoleHeader" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox" unique_id=270223645]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ConsoleTitle" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox/ConsoleHeader" unique_id=353301923]
+layout_mode = 2
+text = "Server Console"
+
+[node name="CollapseBtn" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox/ConsoleHeader" unique_id=1157795739]
+layout_mode = 2
+text = "—"
+
+[node name="ConsoleSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox/ConsoleHeader" unique_id=1590943738]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AutoScrollBtn" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox/ConsoleHeader" unique_id=2003414376]
+layout_mode = 2
+text = "Auto-scroll"
+
+[node name="ClearBtn" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox/ConsoleHeader" unique_id=696708414]
+layout_mode = 2
+text = "Clear"
+
+[node name="ExportBtn" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox/ConsoleHeader" unique_id=516442569]
+layout_mode = 2
+text = "Export"
+
+[node name="ConsoleLog" type="RichTextLabel" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox" unique_id=1558103014]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 2
+bbcode_enabled = true
+text = "[14:02:18 INFO]: Hydrodactyl daemon ready on Falkenstein DE-1
+[14:02:20 INFO]: JVM flags initialized (-Xms4096M -Xmx8192M)
+[14:02:22 INFO]: [Paper] Starting Minecraft 1.20.4 (Build #498)
+[14:02:27 INFO]: [Geyser] Bedrock bridge active on 0.0.0.0:19132
+[14:02:28 INFO]: [playit.gg] Tunnel established: smp.dawghost.net:25565
+[14:02:36 INFO]: Done (14.281s)! For help, type \"help\"
+[14:10:02 INFO]: [AutoSave] World saved successfully
+[14:14:53 INFO]: CyberVoxel logged in at [world: -124, 68, 312]
+[14:16:04 INFO]: Bedrock player joined: LunaCraft_PE
+<CyberVoxel> hey Luna! welcome back to the build site
+<LunaCraft_PE> hey! hopping on tablet while on the train :D
+[14:21:40 INFO]: Snapshot #149 complete to Google Drive"
+scroll_following = true
+autowrap_mode = 2
+selection_enabled = true
+
+[node name="CommandRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox" unique_id=429319070]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="PromptLabel" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox/CommandRow" unique_id=1040996285]
+layout_mode = 2
+text = "/"
+
+[node name="CommandInput" type="LineEdit" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox/CommandRow" unique_id=567130733]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Type a command (e.g. 'say Hello', 'op user', 'gamemode')..."
+
+[node name="SendBtn" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/ConsolePanel/ConsoleMargin/ConsoleVBox/CommandRow" unique_id=1507463769]
+layout_mode = 2
+text = "Send"
+
+[node name="RightSideColumn" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection" unique_id=2086217456]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="PlayersPanel" type="PanelContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn" unique_id=1878565985]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.4
+
+[node name="PlayersMargin" type="MarginContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel" unique_id=492237008]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
+
+[node name="PlayersVBox" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin" unique_id=22487881]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PlayersHeader" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox" unique_id=151360325]
+layout_mode = 2
+
+[node name="PlayersTitle" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayersHeader" unique_id=161165147]
+layout_mode = 2
+text = "Online Players"
+
+[node name="PlayersSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayersHeader" unique_id=1292403442]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PlayersCollapse" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayersHeader" unique_id=1378274201]
+layout_mode = 2
+text = "—"
+
+[node name="PlayerList" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox" unique_id=188313681]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Player1" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList" unique_id=67358947]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="P1Avatar" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player1" unique_id=1729914865]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "CV"
+
+[node name="P1Details" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player1" unique_id=1796658795]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="P1NameRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player1/P1Details" unique_id=954260702]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="P1Name" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player1/P1Details/P1NameRow" unique_id=294501143]
+layout_mode = 2
+text = "CyberVoxel"
+
+[node name="P1Badge" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player1/P1Details/P1NameRow" unique_id=1752873855]
+layout_mode = 2
+text = "🛡"
+
+[node name="P1Ping" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player1/P1Details" unique_id=821194545]
+layout_mode = 2
+text = "18ms"
+
+[node name="P1Actions" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player1" unique_id=656901059]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="P1Op" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player1/P1Actions" unique_id=628400202]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Op"
+text = "👑"
+
+[node name="P1Kick" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player1/P1Actions" unique_id=2116243845]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Kick"
+text = "➜"
+
+[node name="P1Ban" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player1/P1Actions" unique_id=2067370445]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Ban"
+text = "🔨"
+
+[node name="Player2" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList" unique_id=2088354407]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="P2Avatar" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player2" unique_id=449013040]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "LC"
+
+[node name="P2Details" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player2" unique_id=1685132871]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="P2NameRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player2/P2Details" unique_id=1592862633]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="P2Name" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player2/P2Details/P2NameRow" unique_id=1453497186]
+layout_mode = 2
+text = "LunaCraft_PE"
+
+[node name="P2Badge" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player2/P2Details/P2NameRow" unique_id=1263055308]
+layout_mode = 2
+text = "BEDROCK"
+
+[node name="P2Ping" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player2/P2Details" unique_id=863373429]
+layout_mode = 2
+text = "42ms"
+
+[node name="P2Actions" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player2" unique_id=1313319189]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="P2Op" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player2/P2Actions" unique_id=1221629959]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Op"
+text = "👑"
+
+[node name="P2Kick" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player2/P2Actions" unique_id=1695679172]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Kick"
+text = "➜"
+
+[node name="P2Ban" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player2/P2Actions" unique_id=1459481980]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Ban"
+text = "🔨"
+
+[node name="Player3" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList" unique_id=89692660]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="P3Avatar" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player3" unique_id=484685256]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "NK"
+
+[node name="P3Details" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player3" unique_id=1329280583]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="P3Name" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player3/P3Details" unique_id=1853033542]
+layout_mode = 2
+text = "NordicKnight"
+
+[node name="P3Ping" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player3/P3Details" unique_id=73633348]
+layout_mode = 2
+text = "29ms"
+
+[node name="P3Actions" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player3" unique_id=435352812]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="P3Op" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player3/P3Actions" unique_id=102643826]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Op"
+text = "👑"
+
+[node name="P3Kick" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player3/P3Actions" unique_id=860058682]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Kick"
+text = "➜"
+
+[node name="P3Ban" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox/PlayerList/Player3/P3Actions" unique_id=350569139]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Ban"
+text = "🔨"
+
+[node name="PlayersListSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox" unique_id=1595814545]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="WhitelistBtn" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/PlayersPanel/PlayersMargin/PlayersVBox" unique_id=1200002786]
+layout_mode = 2
+text = "MANAGE WHITELIST →"
+alignment = 0
+
+[node name="BackupsPanel" type="PanelContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn" unique_id=1449545120]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BackupsMargin" type="MarginContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel" unique_id=777470280]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
+
+[node name="BackupsVBox" type="VBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin" unique_id=2134598986]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="BackupsHeader" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox" unique_id=22453126]
+layout_mode = 2
+
+[node name="BackupsTitle" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox/BackupsHeader" unique_id=10714033]
+layout_mode = 2
+text = "Backups"
+
+[node name="BackupsSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox/BackupsHeader" unique_id=1971077070]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BackupsStatus" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox/BackupsHeader" unique_id=1727105481]
+layout_mode = 2
+text = "Synced"
+
+[node name="SnapshotRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox" unique_id=1414111510]
+layout_mode = 2
+
+[node name="SnapshotLabel" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox/SnapshotRow" unique_id=501577889]
+layout_mode = 2
+text = "Last Snapshot:"
+
+[node name="SnapshotSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox/SnapshotRow" unique_id=301217452]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SnapshotValue" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox/SnapshotRow" unique_id=1758919811]
+layout_mode = 2
+text = "42m ago (1.42 GB)"
+
+[node name="DestinationRow" type="HBoxContainer" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox" unique_id=845715869]
+layout_mode = 2
+
+[node name="DestinationLabel" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox/DestinationRow" unique_id=986391915]
+layout_mode = 2
+text = "Destination:"
+
+[node name="DestinationSpacer" type="Control" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox/DestinationRow" unique_id=468920416]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DestinationValue" type="Label" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox/DestinationRow" unique_id=154995468]
+layout_mode = 2
+text = "Google Drive"
+
+[node name="CreateBackupBtn" type="Button" parent="AppMargin/MainLayout/ContentArea/BottomSection/RightSideColumn/BackupsPanel/BackupsMargin/BackupsVBox" unique_id=133749987]
+layout_mode = 2
+text = "Create Backup Now"
